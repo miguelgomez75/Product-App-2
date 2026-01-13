@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrito de Compras - E-Commerce Premium</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f0c29 0%, #1a1a2e 50%, #16213e 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #ffffff;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: rgba(26, 26, 46, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      padding: 25px 30px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      color: #d4af37;
+      font-size: 28px;
+      font-weight: 700;
+      text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: rgba(212, 175, 55, 0.2);
+      color: #d4af37;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: rgba(212, 175, 55, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+      color: #0f0c29;
+      font-size: 18px;
+      padding: 18px 36px;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .btn-success:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(212, 175, 55, 0.5);
+    }
+
+    .btn-danger {
+      background: rgba(245, 101, 101, 0.2);
+      color: #fc8181;
+      border: 1px solid rgba(245, 101, 101, 0.3);
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+
+    .btn-danger:hover {
+      background: rgba(245, 101, 101, 0.3);
+    }
+
+    .cart-content {
+      background: rgba(26, 26, 46, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .empty-cart {
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    .empty-cart h2 {
+      color: #e0e0e0;
+      margin-bottom: 15px;
+      font-size: 24px;
+    }
+
+    .empty-cart p {
+      color: #a0a0b0;
+      font-size: 16px;
+    }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns: 2fr 1fr 150px 1fr auto;
+      align-items: center;
+      gap: 20px;
+      padding: 25px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+      transition: all 0.3s;
+    }
+
+    .cart-item:hover {
+      background: rgba(15, 12, 41, 0.3);
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    .item-name {
+      font-weight: 600;
+      color: #ffffff;
+      font-size: 16px;
+    }
+
+    .item-price {
+      color: #d4af37;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(15, 12, 41, 0.6);
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(212, 175, 55, 0.2);
+    }
+
+    .quantity-btn {
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      background: rgba(212, 175, 55, 0.1);
+      color: #d4af37;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    .quantity-btn:hover {
+      background: rgba(212, 175, 55, 0.2);
+      border-color: #d4af37;
+    }
+
+    .quantity {
+      min-width: 40px;
+      text-align: center;
+      font-weight: 600;
+      color: #ffffff;
+      font-size: 16px;
+    }
+
+    .cart-summary {
+      margin-top: 40px;
+      padding-top: 30px;
+      border-top: 2px solid rgba(212, 175, 55, 0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .total {
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .total-amount {
+      color: #d4af37;
+      text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+    }
+
+    .message {
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      text-align: center;
+      font-weight: 600;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message.success {
+      background: rgba(72, 187, 120, 0.2);
+      border: 1px solid rgba(72, 187, 120, 0.4);
+      color: #68d391;
+    }
+
+    .message.error {
+      background: rgba(245, 101, 101, 0.2);
+      border: 1px solid rgba(245, 101, 101, 0.4);
+      color: #fc8181;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🛒 Mi Carrito</h1>
+      <div>
+        <button class="btn btn-primary" onclick="window.location.href='index.html'">← Productos</button>
+        <button class="btn btn-primary" onclick="window.location.href='orders.html'">📦 Mis Pedidos</button>
+      </div>
+    </div>
+
+    <div id="message"></div>
+
+    <div class="cart-content" id="cartContent">
+      <div class="empty-cart">
+        <h2>Tu carrito está vacío</h2>
+        <p>Agrega algunos productos premium para comenzar</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let cart = [];
+
+    function loadCart() {
+      const saved = localStorage.getItem('cart');
+      cart = saved ? JSON.parse(saved) : [];
+      renderCart();
+    }
+
+    function saveCart() {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    function renderCart() {
+      const container = document.getElementById('cartContent');
+
+      if (cart.length === 0) {
+        container.innerHTML = `
+          <div class="empty-cart">
+            <h2>Tu carrito está vacío</h2>
+            <p>Agrega algunos productos premium para comenzar</p>
+          </div>
+        `;
+        return;
+      }
+
+      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+      container.innerHTML = `
+        ${cart.map((item, index) => `
+          <div class="cart-item">
+            <div class="item-name">${item.name}</div>
+            <div class="item-price">${item.price.toFixed(2)}€</div>
+            <div class="quantity-controls">
+              <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">−</button>
+              <span class="quantity">${item.quantity}</span>
+              <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
+            </div>
+            <div class="item-price">${(item.price * item.quantity).toFixed(2)}€</div>
+            <button class="btn btn-danger" onclick="removeItem(${index})">🗑️ Eliminar</button>
+          </div>
+        `).join('')}
+
+        <div class="cart-summary">
+          <div class="total">
+            Total: <span class="total-amount">${total.toFixed(2)}€</span>
+          </div>
+          <button class="btn btn-success" onclick="checkout()">✨ Finalizar Compra</button>
+        </div>
+      `;
+    }
+
+    function updateQuantity(index, change) {
+      cart[index].quantity += change;
+      
+      if (cart[index].quantity <= 0) {
+        cart.splice(index, 1);
+      }
+      
+      saveCart();
+      renderCart();
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      saveCart();
+      renderCart();
+    }
+
+    async function checkout() {
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        showMessage('Debes iniciar sesión para comprar', 'error');
+        setTimeout(() => window.location.href = 'login.html', 2000);
+        return;
+      }
+
+      const products = cart.map(item => ({
+        product: item.id,
+        quantity: item.quantity
+      }));
+
+      const query = `
+        mutation CreateOrder($products: [ProductInput!]!) {
+          createOrder(products: $products) {
+            id
+            total
+            status
+            createdAt
+          }
+        }
+      `;
+
+      try {
+        const response = await fetch('http://localhost:3000/graphql', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            query,
+            variables: { products }
+          })
+        });
+
+        const result = await response.json();
+
+        if (result.errors) {
+          throw new Error(result.errors[0].message);
+        }
+
+        cart = [];
+        saveCart();
+        
+        showMessage('¡Compra realizada con éxito! 🎉', 'success');
+        
+        setTimeout(() => {
+          window.location.href = 'orders.html';
+        }, 2000);
+
+      } catch (error) {
+        showMessage('Error al realizar la compra: ' + error.message, 'error');
+      }
+    }
+
+    function showMessage(text, type) {
+      const messageDiv = document.getElementById('message');
+      messageDiv.innerHTML = `<div class="message ${type}">${text}</div>`;
+      setTimeout(() => messageDiv.innerHTML = '', 5000);
+    }
+
+    loadCart();
+  </script>
+</body>
+</html>
