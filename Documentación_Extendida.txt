@@ -1,0 +1,529 @@
+
+E-COMMERCE PREMIUM - PRÁCTICA 2
+GraphQL + Gestión de Pedidos + Carrito de Compras
+
+═══════════════════════════════════════════════════════════════════
+
+TABLA DE CONTENIDOS
+
+1. Descripción del Proyecto
+2. Requisitos Previos
+3. Instalación
+4. Configuración
+5. Estructura del Proyecto
+6. Funcionalidades Implementadas
+7. API REST Endpoints
+8. GraphQL API
+9. Cambios Importantes
+10. Uso de la Aplicación
+11. Tecnologías Utilizadas
+
+═══════════════════════════════════════════════════════════════════
+
+1. DESCRIPCIÓN DEL PROYECTO
+
+E-Commerce completo desarrollado con Node.js, Express, MongoDB y GraphQL que permite:
+
+Autenticación de usuarios con JWT
+Gestión de productos (CRUD)
+Carrito de compras persistente
+Sistema de pedidos con GraphQL
+Panel de administración
+Chat en tiempo real con Socket.IO
+Roles de usuario (user/admin)
+
+═══════════════════════════════════════════════════════════════════
+
+2. REQUISITOS PREVIOS
+
+Antes de instalar, asegúrate de tener:
+
+• Node.js v14 o superior
+• MongoDB instalado y ejecutándose
+• npm o yarn
+• Git (opcional)
+
+═══════════════════════════════════════════════════════════════════
+
+3. INSTALACIÓN
+
+Paso 1: Clonar el repositorio
+─────────────────────────────
+git clone <tu-repositorio>
+cd portal-productos
+
+Paso 2: Instalar dependencias
+─────────────────────────────
+npm install
+
+Paso 3: Configurar variables de entorno
+───────────────────────────────────────
+Crear archivo .env en la raíz del proyecto:
+
+PORT=3000
+MONGODB_URI=mongodb://localhost:27017/portalproductos
+JWT_SECRET=tu_secreto_super_seguro_aqui
+JWT_EXPIRES_IN=2h
+
+Paso 4: Iniciar MongoDB
+───────────────────────
+En una terminal separada:
+mongod
+
+Paso 5: Iniciar el servidor
+───────────────────────────
+# Modo desarrollo (con nodemon)
+npm run dev
+
+# Modo producción
+npm start
+
+El servidor estará disponible en:
+• Frontend: http://localhost:3000
+• GraphQL Playground: http://localhost:3000/graphql
+
+═══════════════════════════════════════════════════════════════════
+
+4. ESTRUCTURA DEL PROYECTO
+
+portal-productos/
+├── src/
+│   ├── config.js                    # Configuración general
+│   ├── server.js                    # Servidor principal
+│   ├── graphql/
+│   │   ├── schema.js               # Schemas de GraphQL
+│   │   └── resolvers.js            # Resolvers de GraphQL
+│   ├── middleware/
+│   │   └── authenticateJWT.js      # Middleware de autenticación
+│   ├── models/
+│   │   ├── User.js                 # Modelo de usuarios
+│   │   ├── Product.js              # Modelo de productos
+│   │   └── Order.js                # Modelo de pedidos
+│   ├── routes/
+│   │   ├── authRoutes.js           # Rutas de autenticación
+│   │   ├── productRoutes.js        # Rutas de productos
+│   │   ├── users_routes.js         # Rutas de usuarios (admin)
+│   │   └── chatRoutes.js           # Rutas de chat
+│   └── public/
+│       ├── index.html              # Catálogo de productos
+│       ├── login.html              # Login/Registro
+│       ├── cart.html               # Carrito de compras
+│       ├── orders.html             # Mis pedidos
+│       ├── admin.html              # Panel de administración
+│       ├── chat.html               # Chat en vivo
+│       ├── client.js               # Cliente JavaScript
+│       └── styles.css              # Estilos básicos
+├── package.json
+├── .env
+└── README.md
+
+═══════════════════════════════════════════════════════════════════
+
+5. FUNCIONALIDADES IMPLEMENTADAS
+
+AUTENTICACIÓN Y USUARIOS
+─────────────────────────────
+Registro de usuarios con roles (user/admin)
+Login con JWT
+Middleware de autenticación
+Control de acceso por roles
+
+GESTIÓN DE PRODUCTOS
+────────────────────────
+CRUD completo de productos (admin)
+Listado público de productos
+Control de stock en tiempo real
+Validación de stock al agregar al carrito
+
+CARRITO DE COMPRAS
+──────────────────────
+Persistencia en localStorage
+Carrito mantiene productos después de logout
+Actualizar cantidades
+Eliminar productos
+Cálculo automático de totales
+Validación de stock antes de comprar
+
+SISTEMA DE PEDIDOS
+──────────────────────
+Crear pedidos vía GraphQL
+Estados: pending (en curso) / completed (completado)
+Ver historial de pedidos propios
+Admin puede ver todos los pedidos
+Filtrar pedidos por estado
+Detalle completo de cada pedido
+Actualizar estado de pedidos (admin)
+Reducción automática de stock
+
+PANEL DE ADMINISTRACIÓN
+───────────────────────────
+Gestión de usuarios (listar, cambiar rol, eliminar)
+Gestión de productos
+Gestión de pedidos
+Filtros por estado
+Vista detallada de pedidos
+
+CHAT EN TIEMPO REAL
+───────────────────────
+Socket.IO para comunicación en vivo
+Autenticación por JWT
+Historial de mensajes en sesión
+
+═══════════════════════════════════════════════════════════════════
+
+6. API REST ENDPOINTS
+
+AUTENTICACIÓN
+─────────────
+POST /api/auth/register    # Registrar usuario
+POST /api/auth/login       # Iniciar sesión
+
+PRODUCTOS
+─────────
+GET    /api/products           # Listar todos
+GET    /api/products/:id       # Obtener uno
+POST   /api/products           # Crear (admin)
+PUT    /api/products/:id       # Actualizar (admin)
+DELETE /api/products/:id       # Eliminar (admin)
+
+USUARIOS (ADMIN)
+────────────────
+GET    /api/users              # Listar todos
+PUT    /api/users/:id/role     # Cambiar rol
+DELETE /api/users/:id          # Eliminar usuario
+
+═══════════════════════════════════════════════════════════════════
+
+7. GRAPHQL API
+
+ENDPOINT
+────────
+POST http://localhost:3000/graphql
+
+QUERIES
+───────
+
+1. Obtener todos los productos
+   query GetProducts {
+     products {
+       id
+       name
+       description
+       price
+       stock
+     }
+   }
+
+2. Obtener producto por ID
+   query GetProduct($id: ID!) {
+     product(id: $id) {
+       id
+       name
+       description
+       price
+       stock
+     }
+   }
+
+3. Mis pedidos
+   query MyOrders {
+     myOrders {
+       id
+       total
+       status
+       createdAt
+       products {
+         name
+         price
+         quantity
+       }
+     }
+   }
+
+4. Todos los pedidos (admin)
+   query AllOrders {
+     orders {
+       id
+       user {
+         username
+       }
+       total
+       status
+       createdAt
+     }
+   }
+
+5. Filtrar por estado (admin)
+   query OrdersByStatus($status: String!) {
+     ordersByStatus(status: $status) {
+       id
+       user {
+         username
+       }
+       total
+       status
+       createdAt
+     }
+   }
+
+MUTATIONS
+─────────
+
+1. Crear pedido
+   mutation CreateOrder($products: [ProductInput!]!) {
+     createOrder(products: $products) {
+       id
+       total
+       status
+       createdAt
+     }
+   }
+
+   Variables:
+   {
+     "products": [
+       {
+         "product": "676c123abc456def789...",
+         "quantity": 2
+       }
+     ]
+   }
+
+2. Actualizar estado (admin)
+   mutation UpdateOrderStatus($id: ID!, $status: String!) {
+     updateOrderStatus(id: $id, status: $status) {
+       id
+       status
+     }
+   }
+
+   Variables:
+   {
+     "id": "676d789...",
+     "status": "completed"
+   }
+
+═══════════════════════════════════════════════════════════════════
+
+8. CAMBIOS IMPORTANTES IMPLEMENTADOS
+
+1. PERSISTENCIA DEL CARRITO TRAS LOGOUT
+   ────────────────────────────────────
+   Problema anterior: localStorage.clear() borraba todo incluyendo el carrito.
+   
+   Solución implementada en index.html:
+   
+   function logout() {
+     // Solo eliminar token y user, mantener carrito
+     localStorage.removeItem('token');
+     localStorage.removeItem('user');
+     window.location.href = 'login.html';
+   }
+
+2. VALIDACIÓN DE STOCK AL AÑADIR AL CARRITO
+   ─────────────────────────────────────────
+   Nuevo en index.html:
+   
+   function addToCart(id, name, price, availableStock) {
+     let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+     const existingItem = cart.find(item => item.id === id);
+     const currentQuantity = existingItem ? existingItem.quantity : 0;
+     
+     if (currentQuantity >= availableStock) {
+       showMessage('Stock máximo alcanzado', 'error');
+       return;
+     }
+     // ... resto del código
+   }
+
+3. MODELO ORDER MEJORADO
+   ─────────────────────
+   Cambio en Order.js:
+   
+   products: [{
+     product: {
+       type: mongoose.Schema.Types.ObjectId,
+       ref: 'Product',
+       required: false // ← Ahora es opcional
+     },
+     name: { type: String, required: true },
+     price: { type: Number, required: true },
+     quantity: { type: Number, required: true, min: 1 }
+   }]
+   
+   Razón: Si un producto se elimina, el pedido mantiene su historial.
+
+4. MENSAJES DE ERROR MEJORADOS
+   ───────────────────────────
+   En resolvers.js:
+   
+   if (product.stock < item.quantity) {
+     throw new Error(
+       'Stock insuficiente para "' + product.name + '". ' +
+       'Disponible: ' + product.stock + ', ' +
+       'solicitado: ' + item.quantity
+     );
+   }
+
+5. MEJOR MANEJO DE ERRORES EN FRONTEND
+   ────────────────────────────────────
+   En cart.html:
+   
+   if (result.errors) {
+     const errorMsg = result.errors[0].message;
+     
+     if (errorMsg.includes('Stock insuficiente')) {
+       showMessage('' + errorMsg + '. Actualiza tu carrito.', 'error');
+       setTimeout(() => window.location.reload(), 3000);
+       return;
+     }
+     
+     throw new Error(errorMsg);
+   }
+
+═══════════════════════════════════════════════════════════════════
+
+9. USO DE LA APLICACIÓN
+
+PARA USUARIOS (role: user)
+───────────────────────────
+
+1. Registrarse/Iniciar Sesión
+   • Ir a http://localhost:3000/login.html
+   • Crear cuenta o iniciar sesión
+
+2. Explorar Productos
+   • Ver catálogo en index.html
+   • Añadir productos al carrito
+
+3. Gestionar Carrito
+   • Ver carrito en cart.html
+   • Modificar cantidades
+   • Finalizar compra
+
+4. Ver Pedidos
+   • Historial en orders.html
+   • Ver estado de pedidos
+
+5. Chat
+   • Comunicarse en tiempo real en chat.html
+
+PARA ADMINISTRADORES (role: admin)
+───────────────────────────────────
+
+1. Panel de Administración
+   • Acceder a admin.html
+
+2. Gestión de Productos
+   • Crear, editar, eliminar productos
+   • Controlar stock
+
+3. Gestión de Usuarios
+   • Ver todos los usuarios
+   • Cambiar roles
+   • Eliminar usuarios
+
+4. Gestión de Pedidos
+   • Ver todos los pedidos
+   • Filtrar por estado
+   • Cambiar estado a completado
+   • Ver detalles completos
+
+═══════════════════════════════════════════════════════════════════
+
+10. TECNOLOGÍAS UTILIZADAS
+
+BACKEND
+───────
+• Node.js - Runtime de JavaScript
+• Express - Framework web
+• MongoDB - Base de datos NoSQL
+• Mongoose - ODM para MongoDB
+• Apollo Server Express - Servidor GraphQL
+• GraphQL - Lenguaje de consultas
+• Socket.IO - Comunicación en tiempo real
+• JWT - Autenticación
+• bcryptjs - Encriptación de contraseñas
+
+FRONTEND
+────────
+• HTML5/CSS3 - Estructura y estilos
+• JavaScript Vanilla - Lógica del cliente
+• Socket.IO Client - Cliente de chat
+• LocalStorage - Persistencia del carrito
+
+═══════════════════════════════════════════════════════════════════
+
+11. BASE DE DATOS
+
+COLECCIONES MONGODB
+───────────────────
+
+users
+{
+  _id: ObjectId,
+  username: String,
+  passwordHash: String,
+  role: String,        // "user" o "admin"
+  createdAt: Date
+}
+
+products
+{
+  _id: ObjectId,
+  name: String,
+  description: String,
+  price: Number,
+  stock: Number,
+  imageUrl: String,
+  createdBy: ObjectId, // ref: User
+  createdAt: Date
+}
+
+orders
+{
+  _id: ObjectId,
+  user: ObjectId,      // ref: User
+  products: [{
+    product: ObjectId, // ref: Product (opcional)
+    name: String,
+    price: Number,
+    quantity: Number
+  }],
+  total: Number,
+  status: String,      // "pending" o "completed"
+  createdAt: Date
+}
+
+═══════════════════════════════════════════════════════════════════
+
+12. SEGURIDAD
+
+Contraseñas encriptadas con bcrypt
+Autenticación JWT en todas las rutas protegidas
+Validación de roles en backend
+Sanitización de inputs
+CORS configurado
+Tokens con expiración
+
+═══════════════════════════════════════════════════════════════════
+
+13. SOLUCIÓN DE PROBLEMAS
+
+Error: MongoDB no se conecta
+────────────────────────────
+# Verificar que MongoDB esté corriendo
+sudo service mongod status
+
+# O iniciar MongoDB
+sudo service mongod start
+
+Error: Puerto 3000 en uso
+─────────────────────────
+# Cambiar PORT en .env o matar proceso
+lsof -ti:3000 | xargs kill -9
+
+Error: Token inválido
+────────────────────
+• Verificar que el token esté en localStorage
+• Intentar hacer logout y login nuevamente
